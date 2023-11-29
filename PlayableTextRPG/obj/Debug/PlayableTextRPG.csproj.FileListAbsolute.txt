@@ -1,0 +1,8 @@
+C:\Repos\PlayableTextRPG\PlayableTextRPG\bin\Debug\PlayableTextRPG.exe.config
+C:\Repos\PlayableTextRPG\PlayableTextRPG\bin\Debug\PlayableTextRPG.exe
+C:\Repos\PlayableTextRPG\PlayableTextRPG\bin\Debug\PlayableTextRPG.pdb
+C:\Repos\PlayableTextRPG\PlayableTextRPG\obj\Debug\PlayableTextRPG.csproj.AssemblyReference.cache
+C:\Repos\PlayableTextRPG\PlayableTextRPG\obj\Debug\PlayableTextRPG.csproj.CoreCompileInputs.cache
+C:\Repos\PlayableTextRPG\PlayableTextRPG\obj\Debug\PlayableTextRPG.exe
+C:\Repos\PlayableTextRPG\PlayableTextRPG\obj\Debug\PlayableTextRPG.pdb
+C:\Repos\PlayableTextRPG\PlayableTextRPG\bin\Debug\RPGMap.txt

@@ -36,6 +36,7 @@ namespace PlayableTextRPG
         static int currentSeeds;
         static bool youWin;
         static bool gameOver;
+        static bool levelComplete;
 
         // map Variables
 
@@ -57,8 +58,29 @@ namespace PlayableTextRPG
 
         static void Main(string[] args)
         {
+            OnStart();
+            Console.WriteLine("Welcome to my playable text RPG... Press any key to continue!");
+            Console.ReadKey(true);
+            Console.Clear();
 
-
+            
+            while (gameOver != true)
+            {
+                DrawMap();
+                PlayerInput();
+                EnemyMovement();
+            }
+            Console.Clear();
+            if (youWin == true)
+            {
+                Console.WriteLine("You win!");
+                Console.ReadKey(true);
+            }
+            else
+            {
+                Console.WriteLine("You died...");
+                Console.ReadKey(true);
+            }
         }
 
 
@@ -73,12 +95,18 @@ namespace PlayableTextRPG
 
             playerDamage = 1;
             enemyDamage = 1;
+            EnemyAlive();
 
-            currentSeeds = 1;
 
+            currentSeeds = 0;
+            
+            gameOver = false;
+            levelComplete = false;
+            
             path = RPGMap;
             floor = File.ReadAllLines(path);
             layout = new char[floor.Length, floor[0].Length];
+            CreateMap();
 
             mapX = layout.GetLength(1);
             mapY = layout.GetLength(0);
@@ -88,8 +116,11 @@ namespace PlayableTextRPG
 
 
         }
+        
 
-        static void createMap()
+
+
+        static void CreateMap()
         {
             for (int i = 0; i < floor.Length; i++)
             {
@@ -98,12 +129,60 @@ namespace PlayableTextRPG
                     layout[i, j] = floor[i][j];
                 }
             }
+            
+            
+
+
+        }
+        
+        
+        static void DrawMap()
+        {
+            
+            for (int k = 0; k < mapY; k++) 
+            {
+                for (int l = 0; l < mapX; l++)
+                {
+                    char tile = layout[k, l];
+
+                    if (tile == '=' && levelComplete == false)
+                    {
+                        playerPositionX = l;
+                        playerPositionY = k - 1;
+                        levelComplete = true;
+                        layout[k, l] = '#';
+                    }
+
+                    if (tile == 'E' &&  levelComplete == false)
+                    {
+                        if (tile == 'E')
+                        {
+                            enemyPositionX = l;
+                            enemyPositionY = k;
+                        }
+                    }
+                    Console.Write(tile);
+                }   
+                Console.WriteLine();
+
+            }
+
+            PlayerPosition();
+            EnemyPosition();
+            Console.SetCursorPosition(0, 0);
+
+
+
         }
         
         
         
         
-        
+        static void PlayerPosition()
+        {
+            Console.SetCursorPosition(playerPositionX, playerPositionY);
+            Console.WriteLine("!");    
+        }
         
         static void PlayerInput()
         {
@@ -228,7 +307,7 @@ namespace PlayableTextRPG
 
                         return;
                     }
-                    if (layout[playerPositionY, playerPositionX] == '#')
+                    if (layout[playerPositionY, movementX] == '#')
                     {
                         movementX = playerPositionX;
                         playerPositionX = movementX;
@@ -323,6 +402,13 @@ namespace PlayableTextRPG
 
         }
 
+        
+        static void EnemyPosition()
+        {
+            Console.SetCursorPosition(enemyPositionX, enemyPositionY);
+            Console.WriteLine("E");
+        }
+        
         static void EnemyMovement()
         {
             int enemyMovementX;
@@ -369,121 +455,122 @@ namespace PlayableTextRPG
                         enemyPositionY = maximumY;
                     }
                 }
+            }
 
-                if (rollResult == 2)
+            if (rollResult == 2)
+            {
+                enemyMovementY = enemyPositionY - 1;
+                if (enemyMovementY <= 0)
                 {
-                    enemyMovementY = enemyPositionY - 1;
-                    if (enemyMovementY <= 0)
-                    {
-                        enemyMovementY = 0;
-                    }
-
-                    if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
-                    {
-                        playerHealth -= 1;
-                        if (playerHealth <= 0)
-                        {
-                            gameOver = true;
-                        }
-
-                        return;
-                    }
-
-                    if (layout[enemyMovementY, enemyPositionX] == '#')
-                    {
-                        enemyMovementY = enemyPositionY;
-                        enemyPositionY = enemyMovementY;
-                        return;
-                    }
-
-                    else
-                    {
-                        enemyPositionY = enemyMovementY;
-                        if (enemyPositionY >= maximumY)
-                        {
-                            enemyPositionY = maximumY;
-                        }
-                    }
-
-
+                   enemyMovementY = 0;
                 }
 
-                if (rollResult == 3)
+                if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
                 {
-                    enemyMovementX = enemyPositionX - 1;
-                    if (enemyMovementX >= maximumX)
-                    {
-                        enemyMovementX = maximumX;
-                    }
+                   playerHealth -= 1;
+                   if (playerHealth <= 0)
+                   {
+                      gameOver = true;
+                   }
 
-                    if (enemyMovementX <= 0)
-                    {
-                        enemyMovementX = 0;
-                    }
+                   return;
+                }
 
-                    if (enemyMovementX == playerPositionX && enemyPositionY == playerPositionY)
-                    {
-                        playerHealth -= 1;
-                        if (playerHealth <= 0)
-                        {
-                            gameOver = true;
-                        }
+                if (layout[enemyMovementY, enemyPositionX] == '#')
+                {
+                   enemyMovementY = enemyPositionY;
+                   enemyPositionY = enemyMovementY;
+                   return;
+                }
 
-                        return;
-                    }
-
-                    if (layout[enemyPositionY, enemyMovementX] == '#')
-                    {
-                        enemyMovementX = enemyPositionX;
-                        enemyPositionX = enemyMovementX;
-                        return;
-                    }
-
-                    else
-                    {
-                        enemyPositionX = enemyMovementX;
-                        if (enemyPositionX <= 0)
-                        {
-                            enemyPositionX = 0;
-                        }
-                    }
-
-                    if (rollResult == 4)
-                    {
-                        enemyMovementX = enemyPositionX + 1;
-                        
-
-                        if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
-                        {
-                            playerHealth -= 1;
-                            if (playerHealth <= 0)
-                            {
-                                gameOver = true;
-                            }
-
-                            return;
-                        }
-
-                        if (layout[enemyPositionY, enemyMovementX] == '#')
-                        {
-                            enemyMovementX = enemyPositionX;
-                            enemyPositionX = enemyMovementX;
-                            return;
-                        }
-
-                        else
-                        {
-                            enemyPositionY = enemyMovementY;
-                            if (enemyPositionX >= maximumX)
-                            {
-                                enemyPositionX = maximumX;
-                            }
-                        }
-
-                    }
+                else
+                {
+                    enemyPositionY = enemyMovementY;
+                if (enemyPositionY >= maximumY)
+                {
+                    enemyPositionY = maximumY;
                 }
             }
         }
+
+
+
+            if (rollResult == 3)
+            {
+                enemyMovementX = enemyPositionX - 1;
+                if (enemyMovementX >= maximumX)
+                {
+                    enemyMovementX = maximumX;
+                }
+
+                if (enemyMovementX <= 0)
+                {
+                    enemyMovementX = 0;
+                }
+
+                if (enemyMovementX == playerPositionX && enemyPositionY == playerPositionY)
+                {
+                    playerHealth -= 1;
+                    if (playerHealth <= 0)
+                    {
+                        gameOver = true;
+                    }
+                    return;
+                }
+
+
+                if (layout[enemyPositionY, enemyMovementX] == '#')
+                {
+                    enemyMovementX = enemyPositionX;
+                    enemyPositionX = enemyMovementX;
+                    return;
+                }
+
+                else
+                {
+                    enemyPositionX = enemyMovementX;
+                    if (enemyPositionX <= 0)
+                    {
+                        enemyPositionX = 0;
+                    }
+                }
+        }
+
+        if (rollResult == 4)
+        {
+            enemyMovementX = enemyPositionX + 1;
+            if (enemyMovementX == playerPositionY && enemyPositionX == playerPositionX)
+            {
+                playerHealth -= 1;
+                if (playerHealth <= 0)
+                {
+                    gameOver = true;
+                }
+                return;
+            }
+            if (layout[enemyPositionY, enemyMovementX] == '#')
+            {
+                enemyMovementX = enemyPositionX;
+                enemyPositionX = enemyMovementX;
+                return;
+            }
+            else
+            {
+                enemyPositionY = enemyMovementX;
+                
+            if (enemyPositionX >= maximumX)
+            {
+                enemyPositionX = maximumX;
+            }
+        }
+    }
+
+
+
+                            
+
+                
+    }
 
 
         // Making sure enemy is still alive
