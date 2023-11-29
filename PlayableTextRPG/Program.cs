@@ -107,7 +107,7 @@ namespace PlayableTextRPG
         static void DisplayLegend()
         {
             Console.SetCursorPosition(0, mapY + 2);
-            Console.WriteLine("Player = !" + "\n" + "Enemy = E" + "\n" + "Walls = #" + "\n" + "Floor = -" + "\n" + "Seeds = &" + "\n" + "SpikeTrap = ^");
+            Console.WriteLine("Player = !" + "\n" + "Enemy = E" + "\n" + "Walls = #" + "\n" + "Floor = -" + "\n" + "Seeds = &" + "\n" + "SpikeTrap = ^  Door: %");
         }
 
         static void OnStart()
@@ -594,10 +594,10 @@ namespace PlayableTextRPG
             enemyAlive = true;
         }
     }
+
+
+
 }
-
-
-
 
         
 
