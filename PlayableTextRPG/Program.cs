@@ -65,7 +65,7 @@ namespace PlayableTextRPG
         static void OnStart()
         {
             // Initialization
-            
+
             maxPlayerHealth = 6;
             maxEnemyHealth = 3;
             playerHealth = maxPlayerHealth;
@@ -75,7 +75,7 @@ namespace PlayableTextRPG
             enemyDamage = 1;
 
             currentSeeds = 1;
-            
+
             path = RPGMap;
             floor = File.ReadAllLines(path);
             layout = new char[floor.Length, floor[0].Length];
@@ -88,7 +88,7 @@ namespace PlayableTextRPG
 
 
         }
-    
+
         static void PlayerInput()
         {
             bool moved;
@@ -103,8 +103,8 @@ namespace PlayableTextRPG
             if (moved == false)
             {
                 // Up
-                
-                if (playerController.Key == ConsoleKey.UpArrow || playerController.Key == ConsoleKey.W) 
+
+                if (playerController.Key == ConsoleKey.UpArrow || playerController.Key == ConsoleKey.W)
                 {
                     movementY = playerPositionY - 1;
 
@@ -112,7 +112,7 @@ namespace PlayableTextRPG
                     {
                         movementY = 0;
                     }
-                    if (movementY == enemyPositionY && playerPositionX == enemyPositionX) 
+                    if (movementY == enemyPositionY && playerPositionX == enemyPositionX)
                     {
                         enemyHealth -= 1;
                         if (enemyHealth <= 0)
@@ -121,7 +121,7 @@ namespace PlayableTextRPG
                             enemyPositionY = 0;
                             enemyAlive = false;
                         }
-                        
+
                         return;
                     }
                     if (layout[movementY, playerPositionX] == '#')
@@ -191,7 +191,7 @@ namespace PlayableTextRPG
 
 
                 // Left
-                
+
                 if (playerController.Key == ConsoleKey.LeftArrow || playerController.Key == ConsoleKey.A)
                 {
                     movementX = playerPositionX - 1;
@@ -236,7 +236,7 @@ namespace PlayableTextRPG
 
 
                 // Right
-                
+
                 if (playerController.Key == ConsoleKey.RightArrow || playerController.Key == ConsoleKey.D)
                 {
                     movementX = playerPositionX + 1;
@@ -272,27 +272,27 @@ namespace PlayableTextRPG
                             playerPositionX = maximumX;
                         }
                     }
-                
+
                 }
-                
+
                 // Winning door
-                
+
                 if (layout[playerPositionY, playerPositionX] == '%')
                 {
                     youWin = true;
                     gameOver = true;
 
                 }
-                
+
                 // Collectable seeds
-                if (layout[playerPositionY, playerPositionX] == '&') 
+                if (layout[playerPositionY, playerPositionX] == '&')
                 {
                     currentSeeds += 1;
                     layout[playerPositionY, playerPositionX] = '~';
                 }
 
                 // Exit game
-                
+
                 if (playerController.Key == ConsoleKey.Escape)
                 {
                     Environment.Exit(1);
@@ -306,15 +306,107 @@ namespace PlayableTextRPG
             }
 
         }
-    
-        
-        // Making sure enemy is still alive
-        static void EnemyAlive()
+
+        static void EnemyMovement()
         {
-            enemyAlive = true;
+            int enemyMovementX;
+            int enemyMovementY;
+
+            // random roll to move
+            Random randomRoll = new Random();
+
+
+            // enemy will have 1 of 5 options to move
+            int rollResult = randomRoll.Next(1, 5);
+
+            if (rollResult == 1)
+            {
+                enemyMovementY = enemyPositionY + 1;
+                if (enemyMovementY >= maximumY)
+                {
+                    enemyMovementY = maximumY;
+                }
+
+                if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
+                {
+                    playerHealth -= 1;
+                    if (playerHealth <= 0)
+                    {
+                        gameOver = true;
+                    }
+
+                    return;
+                }
+
+                if (layout[enemyMovementY, enemyPositionX] == '#')
+                {
+                    enemyMovementY = enemyPositionY;
+                    enemyPositionY = enemyMovementY;
+                }
+
+                else
+                {
+                    enemyPositionY = enemyMovementY;
+                    if (enemyPositionY >= maximumY)
+                    {
+                        enemyPositionY = maximumY;
+                    }
+                }
+
+                if (rollResult == 2)
+                {
+                    enemyMovementY = enemyPositionY - 1;
+                    if (enemyMovementY <= 0)
+                    {
+                        enemyMovementY = 0;
+                    }
+
+                    if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
+                    {
+                        playerHealth -= 1;
+                        if (playerHealth <= 0)
+                        {
+                            gameOver = true;
+                        }
+
+                        return;
+                    }
+
+                    if (layout[enemyMovementY, enemyPositionX] == '#')
+                    {
+                        enemyMovementY = enemyPositionY;
+                        enemyPositionY = enemyMovementY;
+                    }
+
+                    else
+                    {
+                        enemyPositionY = enemyMovementY;
+                        if (enemyPositionY >= maximumY)
+                        {
+                            enemyPositionY = maximumY;
+                        }
+                    }
+
+
+                }
+
+
+
+
+
+            }
         }
-    
-    
-    }
+
+
+            // Making sure enemy is still alive
+            static void EnemyAlive()
+            {
+                enemyAlive = true;
+            }
+
+
+        }
 }
+
+
  
