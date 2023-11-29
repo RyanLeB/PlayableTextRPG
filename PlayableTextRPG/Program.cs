@@ -59,16 +59,26 @@ namespace PlayableTextRPG
         static void Main(string[] args)
         {
             OnStart();
-            Console.WriteLine("Welcome to my playable text RPG... Press any key to continue!");
+            Console.WriteLine("Welcome to my playable text RPG");
+            Console.WriteLine("\n");
+            Console.WriteLine("\n");
+            Console.WriteLine("Your goal is to collect seeds around a dungeon map whilst avoiding or defeating the enemies around you!");
+            Console.WriteLine("\n");
+            Console.WriteLine("You can attack by either running into the enemy or pressing the spacebar when an enemy is close!");
+            Console.WriteLine("It's dangerous to go alone... good luck!");
+            Console.WriteLine("Press any key to start...");
             Console.ReadKey(true);
             Console.Clear();
 
-            
+
             while (gameOver != true)
             {
+
                 DrawMap();
+                DisplayHUD();
                 PlayerInput();
                 EnemyMovement();
+                
             }
             Console.Clear();
             if (youWin == true)
@@ -81,6 +91,13 @@ namespace PlayableTextRPG
                 Console.WriteLine("You died...");
                 Console.ReadKey(true);
             }
+        }
+
+
+        static void DisplayHUD()
+        {
+            Console.SetCursorPosition(0, mapY + 1);
+            Console.WriteLine($"Player Health: {playerHealth}/{maxPlayerHealth} | Collected Seeds: {currentSeeds} | Enemy Health: {enemyHealth}/{maxEnemyHealth}");
         }
 
 
@@ -99,10 +116,10 @@ namespace PlayableTextRPG
 
 
             currentSeeds = 0;
-            
+
             gameOver = false;
             levelComplete = false;
-            
+
             path = RPGMap;
             floor = File.ReadAllLines(path);
             layout = new char[floor.Length, floor[0].Length];
@@ -116,7 +133,7 @@ namespace PlayableTextRPG
 
 
         }
-        
+
 
 
 
@@ -129,17 +146,19 @@ namespace PlayableTextRPG
                     layout[i, j] = floor[i][j];
                 }
             }
-            
-            
+
+
 
 
         }
-        
-        
+
+
         static void DrawMap()
         {
-            
-            for (int k = 0; k < mapY; k++) 
+
+            Console.Clear();
+
+            for (int k = 0; k < mapY; k++)
             {
                 for (int l = 0; l < mapX; l++)
                 {
@@ -153,7 +172,7 @@ namespace PlayableTextRPG
                         layout[k, l] = '#';
                     }
 
-                    if (tile == 'E' &&  levelComplete == false)
+                    if (tile == 'E' && levelComplete == false)
                     {
                         if (tile == 'E')
                         {
@@ -162,7 +181,7 @@ namespace PlayableTextRPG
                         }
                     }
                     Console.Write(tile);
-                }   
+                }
                 Console.WriteLine();
 
             }
@@ -174,16 +193,16 @@ namespace PlayableTextRPG
 
 
         }
-        
-        
-        
-        
+
+
+
+
         static void PlayerPosition()
         {
             Console.SetCursorPosition(playerPositionX, playerPositionY);
-            Console.WriteLine("!");    
+            Console.WriteLine("!");
         }
-        
+
         static void PlayerInput()
         {
             bool moved;
@@ -196,6 +215,18 @@ namespace PlayableTextRPG
             playerController = Console.ReadKey(true);
 
             if (moved == false)
+
+                if (playerController.Key == ConsoleKey.Spacebar)
+                {
+                    // Add code for the attack action here
+                    AttackEnemy();
+                    moved = true; // Mark as moved to prevent additional movement
+                    return;
+                }
+
+
+
+
             {
                 // Up
 
@@ -402,186 +433,97 @@ namespace PlayableTextRPG
 
         }
 
-        
-        static void EnemyPosition()
-        {
-            Console.SetCursorPosition(enemyPositionX, enemyPositionY);
-            Console.WriteLine("E");
-        }
-        
         static void EnemyMovement()
         {
-            int enemyMovementX;
-            int enemyMovementY;
+            int enemyMovementX = enemyPositionX;
+            int enemyMovementY = enemyPositionY;
 
             // random roll to move
             Random randomRoll = new Random();
 
-
-            // enemy will have 1 of 5 options to move
+            // enemy will have 1 of 4 options to move
             int rollResult = randomRoll.Next(1, 5);
 
             if (rollResult == 1)
             {
-                enemyMovementY = enemyPositionY + 1;
-                if (enemyMovementY >= maximumY)
-                {
-                    enemyMovementY = maximumY;
-                }
-
-                if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
-                {
-                    playerHealth -= 1;
-                    if (playerHealth <= 0)
-                    {
-                        gameOver = true;
-                    }
-
-                    return;
-                }
-
-                if (layout[enemyMovementY, enemyPositionX] == '#')
-                {
-                    enemyMovementY = enemyPositionY;
-                    enemyPositionY = enemyMovementY;
-                    return;
-                }
-
-                else
-                {
-                    enemyPositionY = enemyMovementY;
-                    if (enemyPositionY >= maximumY)
-                    {
-                        enemyPositionY = maximumY;
-                    }
-                }
+                enemyMovementY = Math.Min(enemyPositionY + 1, maximumY);
+            }
+            else if (rollResult == 2)
+            {
+                enemyMovementY = Math.Max(enemyPositionY - 1, 0);
+            }
+            else if (rollResult == 3)
+            {
+                enemyMovementX = Math.Max(enemyPositionX - 1, 0);
+            }
+            else // rollResult == 4
+            {
+                enemyMovementX = Math.Min(enemyPositionX + 1, maximumX);
             }
 
-            if (rollResult == 2)
+            // Check for collisions and update the enemy position
+            if (layout[enemyMovementY, enemyMovementX] != '#')
             {
-                enemyMovementY = enemyPositionY - 1;
-                if (enemyMovementY <= 0)
-                {
-                   enemyMovementY = 0;
-                }
-
-                if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
-                {
-                   playerHealth -= 1;
-                   if (playerHealth <= 0)
-                   {
-                      gameOver = true;
-                   }
-
-                   return;
-                }
-
-                if (layout[enemyMovementY, enemyPositionX] == '#')
-                {
-                   enemyMovementY = enemyPositionY;
-                   enemyPositionY = enemyMovementY;
-                   return;
-                }
-
-                else
-                {
-                    enemyPositionY = enemyMovementY;
-                if (enemyPositionY >= maximumY)
-                {
-                    enemyPositionY = maximumY;
-                }
+                layout[enemyPositionY, enemyPositionX] = '-';
+                
+                // Update enemy position if no collision
+                enemyPositionX = enemyMovementX;
+                enemyPositionY = enemyMovementY;
             }
-        }
 
-
-
-            if (rollResult == 3)
-            {
-                enemyMovementX = enemyPositionX - 1;
-                if (enemyMovementX >= maximumX)
-                {
-                    enemyMovementX = maximumX;
-                }
-
-                if (enemyMovementX <= 0)
-                {
-                    enemyMovementX = 0;
-                }
-
-                if (enemyMovementX == playerPositionX && enemyPositionY == playerPositionY)
-                {
-                    playerHealth -= 1;
-                    if (playerHealth <= 0)
-                    {
-                        gameOver = true;
-                    }
-                    return;
-                }
-
-
-                if (layout[enemyPositionY, enemyMovementX] == '#')
-                {
-                    enemyMovementX = enemyPositionX;
-                    enemyPositionX = enemyMovementX;
-                    return;
-                }
-
-                else
-                {
-                    enemyPositionX = enemyMovementX;
-                    if (enemyPositionX <= 0)
-                    {
-                        enemyPositionX = 0;
-                    }
-                }
-        }
-
-        if (rollResult == 4)
-        {
-            enemyMovementX = enemyPositionX + 1;
-            if (enemyMovementX == playerPositionY && enemyPositionX == playerPositionX)
+            // Check for collision with player
+            if (enemyPositionX == playerPositionX && enemyPositionY == playerPositionY)
             {
                 playerHealth -= 1;
                 if (playerHealth <= 0)
                 {
                     gameOver = true;
                 }
-                return;
-            }
-            if (layout[enemyPositionY, enemyMovementX] == '#')
-            {
-                enemyMovementX = enemyPositionX;
-                enemyPositionX = enemyMovementX;
-                return;
-            }
-            else
-            {
-                enemyPositionY = enemyMovementX;
-                
-            if (enemyPositionX >= maximumX)
-            {
-                enemyPositionX = maximumX;
             }
         }
-    }
+
+
+        static void AttackEnemy()
+        {
+            
+            if (Math.Abs(playerPositionX - enemyPositionX) <= 1 && Math.Abs(playerPositionY - enemyPositionY) <= 1)
+            {
+                enemyHealth -= 1;
+                if (enemyHealth <= 0)
+                {
+                    enemyPositionX = 0;
+                    enemyPositionY = 0;
+                    enemyAlive = false;
+                }
+            }
+        }
 
 
 
-                            
-
-                
-    }
-
+        static void EnemyPosition()
+        {
+            Console.SetCursorPosition(enemyPositionX, enemyPositionY);
+            Console.Write("E");
+        }
 
         // Making sure enemy is still alive
         static void EnemyAlive()
         {
             enemyAlive = true;
         }
-
-
     }    
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
  
