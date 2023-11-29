@@ -76,6 +76,7 @@ namespace PlayableTextRPG
 
                 DrawMap();
                 DisplayHUD();
+                DisplayLegend();
                 PlayerInput();
                 EnemyMovement();
                 
@@ -102,6 +103,12 @@ namespace PlayableTextRPG
             Console.WriteLine($"Player Health: {playerHealth}/{maxPlayerHealth} | Collected Seeds: {currentSeeds} | Enemy Health: {enemyHealth}/{maxEnemyHealth}");
         }
 
+
+        static void DisplayLegend()
+        {
+            Console.SetCursorPosition(0, mapY + 2);
+            Console.WriteLine("Player = !" + "\n" + "Enemy = E" + "\n" + "Walls = #" + "\n" + "Floor = -" + "\n" + "Seeds = &" + "\n" + "SpikeTrap = ^");
+        }
 
         static void OnStart()
         {
@@ -202,15 +209,20 @@ namespace PlayableTextRPG
         static void PlayerPosition()
         {
             Console.SetCursorPosition(playerPositionX, playerPositionY);
-            Console.WriteLine("!");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("!");
+            Console.ResetColor();
         }
 
         static void PlayerInput()
         {
-            bool moved;
+            bool moved = false;
 
             int movementX;
             int movementY;
+
+            int newPlayerPositionX = playerPositionX;
+            int newPlayerPositionY = playerPositionY;
 
             moved = false;
 
@@ -252,6 +264,16 @@ namespace PlayableTextRPG
 
                         return;
                     }
+
+                    if (layout[movementY, playerPositionX] == '^')
+                    {
+                        playerHealth -= 1;
+                        if (playerHealth <= 0)
+                        {
+                            gameOver = true;
+                        }
+                    }
+
                     if (layout[movementY, playerPositionX] == '#')
                     {
                         movementY = playerPositionY;
@@ -295,6 +317,15 @@ namespace PlayableTextRPG
 
                         return;
                     }
+                    if (layout[movementY, playerPositionX] == '^')
+                    {
+                        playerHealth -= 1;
+                        if (playerHealth <= 0)
+                        {
+                            gameOver = true;
+                        }
+                    }
+
                     if (layout[movementY, playerPositionX] == '#')
                     {
                         movementY = playerPositionY;
@@ -340,12 +371,25 @@ namespace PlayableTextRPG
 
                         return;
                     }
+
+                    if (layout[playerPositionY, movementX] == '^')
+                    {
+                        playerHealth -= 1;
+                        if (playerHealth <= 0)
+                        {
+                            gameOver = true;
+                        }
+                    }
+
+
                     if (layout[playerPositionY, movementX] == '#')
                     {
                         movementX = playerPositionX;
                         playerPositionX = movementX;
                         return;
                     }
+
+
                     else
                     {
                         moved = true;
@@ -385,12 +429,25 @@ namespace PlayableTextRPG
 
                         return;
                     }
+
+                    if (layout[playerPositionY, movementX] == '^')
+                    {
+                        playerHealth -= 1;
+                        if (playerHealth <= 0)
+                        {
+                            gameOver = true;
+                        }
+                    }
+
+
                     if (layout[playerPositionY, movementX] == '#')
                     {
                         movementX = playerPositionX;
                         playerPositionX = movementX;
                         return;
                     }
+                    
+
                     else
                     {
                         moved = true;
@@ -427,7 +484,7 @@ namespace PlayableTextRPG
                 }
 
 
-
+                
 
 
 
@@ -439,6 +496,8 @@ namespace PlayableTextRPG
         {
             int enemyMovementX = enemyPositionX;
             int enemyMovementY = enemyPositionY;
+            int newEnemyPositionX = enemyPositionX;
+            int newEnemyPositionY = enemyPositionY;
 
             // random roll to move
             Random randomRoll = new Random();
@@ -448,19 +507,45 @@ namespace PlayableTextRPG
 
             if (rollResult == 1)
             {
-                enemyMovementY = Math.Min(enemyPositionY + 1, maximumY);
+                enemyMovementY = enemyPositionY + 1;
+                if (enemyMovementY >= maximumY)
+                {
+                    enemyMovementY = maximumY;
+                }
             }
             else if (rollResult == 2)
             {
-                enemyMovementY = Math.Max(enemyPositionY - 1, 0);
+                enemyMovementY = enemyPositionY - 1;
+                if (enemyMovementY <= 0)
+                {
+                    enemyMovementY = 0;
+                }
             }
             else if (rollResult == 3)
             {
-                enemyMovementX = Math.Max(enemyPositionX - 1, 0);
+                enemyMovementX = enemyPositionX - 1;
+                if (enemyMovementX <= 0)
+                {
+                    enemyMovementX = 0;
+                }
             }
             else // rollResult == 4
             {
-                enemyMovementX = Math.Min(enemyPositionX + 1, maximumX);
+                enemyMovementX = enemyPositionX + 1;
+                if (enemyMovementX >= maximumX)
+                {
+                    enemyMovementX = maximumX;
+                }
+            }
+
+            // Check for collisions and update the enemy position
+            if (layout[enemyMovementY, enemyMovementX] != '#')
+            {
+
+                layout[enemyPositionY, enemyPositionX] = '-';
+                // Update enemy position if no collision
+                enemyPositionX = enemyMovementX;
+                enemyPositionY = enemyMovementY;
             }
 
             // Check for collision with player
@@ -472,17 +557,9 @@ namespace PlayableTextRPG
                     gameOver = true;
                 }
             }
-            // Check for collisions and update the enemy position
-            if (layout[enemyMovementY, enemyMovementX] != '#')
-            {
-                layout[enemyPositionY, enemyPositionX] = '-';
-                
-                // Update enemy position if no collision
-                enemyPositionX = enemyMovementX;
-                enemyPositionY = enemyMovementY;
-            }
-
         }
+
+            
 
 
         static void AttackEnemy()
@@ -505,7 +582,9 @@ namespace PlayableTextRPG
         static void EnemyPosition()
         {
             Console.SetCursorPosition(enemyPositionX, enemyPositionY);
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("E");
+            Console.ResetColor(); 
         }
 
         // Making sure enemy is still alive
@@ -515,6 +594,10 @@ namespace PlayableTextRPG
         }
     }    
 }
+
+
+        
+
 
 
 
