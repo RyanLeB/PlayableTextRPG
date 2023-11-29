@@ -89,6 +89,22 @@ namespace PlayableTextRPG
 
         }
 
+        static void createMap()
+        {
+            for (int i = 0; i < floor.Length; i++)
+            {
+                for (int j = 0; j < floor[i].Length; j++)
+                {
+                    layout[i, j] = floor[i][j];
+                }
+            }
+        }
+        
+        
+        
+        
+        
+        
         static void PlayerInput()
         {
             bool moved;
@@ -342,6 +358,7 @@ namespace PlayableTextRPG
                 {
                     enemyMovementY = enemyPositionY;
                     enemyPositionY = enemyMovementY;
+                    return;
                 }
 
                 else
@@ -376,6 +393,7 @@ namespace PlayableTextRPG
                     {
                         enemyMovementY = enemyPositionY;
                         enemyPositionY = enemyMovementY;
+                        return;
                     }
 
                     else
@@ -390,22 +408,92 @@ namespace PlayableTextRPG
 
                 }
 
+                if (rollResult == 3)
+                {
+                    enemyMovementX = enemyPositionX - 1;
+                    if (enemyMovementX >= maximumX)
+                    {
+                        enemyMovementX = maximumX;
+                    }
 
+                    if (enemyMovementX <= 0)
+                    {
+                        enemyMovementX = 0;
+                    }
 
+                    if (enemyMovementX == playerPositionX && enemyPositionY == playerPositionY)
+                    {
+                        playerHealth -= 1;
+                        if (playerHealth <= 0)
+                        {
+                            gameOver = true;
+                        }
 
+                        return;
+                    }
 
+                    if (layout[enemyPositionY, enemyMovementX] == '#')
+                    {
+                        enemyMovementX = enemyPositionX;
+                        enemyPositionX = enemyMovementX;
+                        return;
+                    }
+
+                    else
+                    {
+                        enemyPositionX = enemyMovementX;
+                        if (enemyPositionX <= 0)
+                        {
+                            enemyPositionX = 0;
+                        }
+                    }
+
+                    if (rollResult == 4)
+                    {
+                        enemyMovementX = enemyPositionX + 1;
+                        
+
+                        if (enemyMovementY == playerPositionY && enemyPositionX == playerPositionX)
+                        {
+                            playerHealth -= 1;
+                            if (playerHealth <= 0)
+                            {
+                                gameOver = true;
+                            }
+
+                            return;
+                        }
+
+                        if (layout[enemyPositionY, enemyMovementX] == '#')
+                        {
+                            enemyMovementX = enemyPositionX;
+                            enemyPositionX = enemyMovementX;
+                            return;
+                        }
+
+                        else
+                        {
+                            enemyPositionY = enemyMovementY;
+                            if (enemyPositionX >= maximumX)
+                            {
+                                enemyPositionX = maximumX;
+                            }
+                        }
+
+                    }
+                }
             }
         }
 
 
-            // Making sure enemy is still alive
-            static void EnemyAlive()
-            {
-                enemyAlive = true;
-            }
-
-
+        // Making sure enemy is still alive
+        static void EnemyAlive()
+        {
+            enemyAlive = true;
         }
+
+
+    }    
 }
 
 
