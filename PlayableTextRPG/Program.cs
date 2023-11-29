@@ -84,6 +84,8 @@ namespace PlayableTextRPG
             if (youWin == true)
             {
                 Console.WriteLine("You win!");
+                Console.WriteLine("\n");
+                Console.WriteLine($"You collected : {currentSeeds} Seeds!");
                 Console.ReadKey(true);
             }
             else
@@ -232,7 +234,7 @@ namespace PlayableTextRPG
 
                 if (playerController.Key == ConsoleKey.UpArrow || playerController.Key == ConsoleKey.W)
                 {
-                    movementY = playerPositionY - 1;
+                    movementY = Math.Max(playerPositionY - 1, 0);
 
                     if (movementY <= 0)
                     {
@@ -275,7 +277,7 @@ namespace PlayableTextRPG
 
                 if (playerController.Key == ConsoleKey.DownArrow || playerController.Key == ConsoleKey.S)
                 {
-                    movementY = playerPositionY + 1;
+                    movementY = Math.Min(playerPositionY + 1, maximumY);
 
                     if (movementY >= maximumY)
                     {
@@ -320,7 +322,7 @@ namespace PlayableTextRPG
 
                 if (playerController.Key == ConsoleKey.LeftArrow || playerController.Key == ConsoleKey.A)
                 {
-                    movementX = playerPositionX - 1;
+                    movementX = Math.Max(playerPositionX - 1, 0);
 
                     if (movementX <= 0)
                     {
@@ -365,7 +367,7 @@ namespace PlayableTextRPG
 
                 if (playerController.Key == ConsoleKey.RightArrow || playerController.Key == ConsoleKey.D)
                 {
-                    movementX = playerPositionX + 1;
+                    movementX = Math.Min(playerPositionX + 1, maximumX);
 
                     if (movementX >= maximumX)
                     {
@@ -461,6 +463,15 @@ namespace PlayableTextRPG
                 enemyMovementX = Math.Min(enemyPositionX + 1, maximumX);
             }
 
+            // Check for collision with player
+            if (enemyPositionX == playerPositionX && enemyPositionY == playerPositionY)
+            {
+                playerHealth -= 1;
+                if (playerHealth <= 0)
+                {
+                    gameOver = true;
+                }
+            }
             // Check for collisions and update the enemy position
             if (layout[enemyMovementY, enemyMovementX] != '#')
             {
@@ -471,15 +482,6 @@ namespace PlayableTextRPG
                 enemyPositionY = enemyMovementY;
             }
 
-            // Check for collision with player
-            if (enemyPositionX == playerPositionX && enemyPositionY == playerPositionY)
-            {
-                playerHealth -= 1;
-                if (playerHealth <= 0)
-                {
-                    gameOver = true;
-                }
-            }
         }
 
 
