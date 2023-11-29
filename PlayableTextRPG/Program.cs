@@ -79,7 +79,7 @@ namespace PlayableTextRPG
                 DisplayLegend();
                 PlayerInput();
                 EnemyMovement();
-                
+
             }
             Console.Clear();
             if (youWin == true)
@@ -446,7 +446,7 @@ namespace PlayableTextRPG
                         playerPositionX = movementX;
                         return;
                     }
-                    
+
 
                     else
                     {
@@ -484,7 +484,7 @@ namespace PlayableTextRPG
                 }
 
 
-                
+
 
 
 
@@ -556,15 +556,16 @@ namespace PlayableTextRPG
                 {
                     gameOver = true;
                 }
+                return;
             }
         }
 
-            
+
 
 
         static void AttackEnemy()
         {
-            
+
             if (Math.Abs(playerPositionX - enemyPositionX) <= 1 && Math.Abs(playerPositionY - enemyPositionY) <= 1)
             {
                 enemyHealth -= 1;
@@ -584,7 +585,7 @@ namespace PlayableTextRPG
             Console.SetCursorPosition(enemyPositionX, enemyPositionY);
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("E");
-            Console.ResetColor(); 
+            Console.ResetColor();
         }
 
         // Making sure enemy is still alive
@@ -592,8 +593,10 @@ namespace PlayableTextRPG
         {
             enemyAlive = true;
         }
-    }    
+    }
 }
+
+
 
 
         
