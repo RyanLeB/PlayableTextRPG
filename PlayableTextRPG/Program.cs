@@ -241,255 +241,235 @@ namespace PlayableTextRPG
 
 
 
+
+            // Up
+
+            if (playerController.Key == ConsoleKey.UpArrow || playerController.Key == ConsoleKey.W)
             {
-                // Up
+                movementY = Math.Max(playerPositionY - 1, 0);
 
-                if (playerController.Key == ConsoleKey.UpArrow || playerController.Key == ConsoleKey.W)
+                if (movementY <= 0)
                 {
-                    movementY = Math.Max(playerPositionY - 1, 0);
-
-                    if (movementY <= 0)
+                    movementY = 0;
+                }
+                if (movementY == enemyPositionY && playerPositionX == enemyPositionX)
+                {
+                    enemyHealth -= 1;
+                    if (enemyHealth <= 0)
                     {
-                        movementY = 0;
-                    }
-                    if (movementY == enemyPositionY && playerPositionX == enemyPositionX)
-                    {
-                        enemyHealth -= 1;
-                        if (enemyHealth <= 0)
-                        {
-                            enemyPositionX = 0;
-                            enemyPositionY = 0;
-                            enemyAlive = false;
-                        }
-
-                        return;
+                        enemyPositionX = 0;
+                        enemyPositionY = 0;
+                        enemyAlive = false;
                     }
 
-                    if (layout[movementY, playerPositionX] == '^')
-                    {
-                        playerHealth -= 1;
-                        if (playerHealth <= 0)
-                        {
-                            gameOver = true;
-                        }
-                    }
-
-                    if (layout[movementY, playerPositionX] == '#')
-                    {
-                        movementY = playerPositionY;
-                        playerPositionY = movementY;
-                        return;
-                    }
-                    else
-                    {
-                        moved = true;
-                        playerPositionY = movementY;
-                        if (playerPositionY <= 0)
-                        {
-                            playerPositionY = 0;
-                        }
+                    return;
+                }
 
 
+                if (layout[movementY, playerPositionX] == '^')
+                {
+                    playerHealth -= 1;
+                    if (playerHealth <= 0)
+                    {
+                        gameOver = true;
                     }
+                }
+
+                if (layout[movementY, playerPositionX] == '#')
+                {
+                    movementY = playerPositionY;
+                    playerPositionY = movementY;
+                    return;
 
 
                 }
+                else
+                {
+                    moved = true;
+                    playerPositionY = movementY;
+                    if (playerPositionY <= 0)
+                    {
+                        playerPositionY = 0;
+                    }
+                }
+            }
+
+
+
+
 
                 // Down
 
-                if (playerController.Key == ConsoleKey.DownArrow || playerController.Key == ConsoleKey.S)
+            if (playerController.Key == ConsoleKey.DownArrow || playerController.Key == ConsoleKey.S)
+            {
+                movementY = Math.Min(playerPositionY + 1, maximumY);
+
+                if (movementY >= maximumY)
                 {
-                    movementY = Math.Min(playerPositionY + 1, maximumY);
-
-                    if (movementY >= maximumY)
+                    movementY = maximumY;
+                }
+                if (movementY == enemyPositionY && playerPositionX == enemyPositionX)
+                {
+                    enemyHealth -= 1;
+                    if (enemyHealth <= 0)
                     {
-                        movementY = maximumY;
-                    }
-                    if (movementY == enemyPositionY && playerPositionX == enemyPositionX)
-                    {
-                        enemyHealth -= 1;
-                        if (enemyHealth <= 0)
-                        {
-                            enemyPositionX = 0;
-                            enemyPositionY = 0;
-                            enemyAlive = false;
-                        }
-
-                        return;
-                    }
-                    if (layout[movementY, playerPositionX] == '^')
-                    {
-                        playerHealth -= 1;
-                        if (playerHealth <= 0)
-                        {
-                            gameOver = true;
-                        }
+                        enemyPositionX = 0;
+                        enemyPositionY = 0;
+                        enemyAlive = false;
                     }
 
-                    if (layout[movementY, playerPositionX] == '#')
+                    return;
+                }
+                if (layout[movementY, playerPositionX] == '^')
+                {
+                    playerHealth -= 1;
+                    if (playerHealth <= 0)
                     {
-                        movementY = playerPositionY;
-                        playerPositionY = movementY;
-                        return;
+                        gameOver = true;
                     }
-                    else
+                }
+
+                if (layout[movementY, playerPositionX] == '#')
+                {
+                    movementY = playerPositionY;
+                    playerPositionY = movementY;
+                    return;
+                }
+                else
+                {
+                    moved = true;
+                    playerPositionY = movementY;
+                    if (playerPositionY >= maximumY)
                     {
-                        moved = true;
-                        playerPositionY = movementY;
-                        if (playerPositionY >= maximumY)
-                        {
-                            playerPositionY = maximumY;
-                        }
-
-
+                        playerPositionY = maximumY;
                     }
 
 
                 }
-
-
+            }
 
                 // Left
 
-                if (playerController.Key == ConsoleKey.LeftArrow || playerController.Key == ConsoleKey.A)
+            if (playerController.Key == ConsoleKey.LeftArrow || playerController.Key == ConsoleKey.A)
+            {
+                movementX = Math.Max(playerPositionX - 1, 0);
+                    
+                if (movementX <= 0)
                 {
-                    movementX = Math.Max(playerPositionX - 1, 0);
-
-                    if (movementX <= 0)
+                    movementX = 0;
+                }
+                if (movementX == enemyPositionX && playerPositionY == enemyPositionY)
+                {
+                    enemyHealth -= 1;
+                    if (enemyHealth <= 0)
                     {
-                        movementX = 0;
+                        enemyPositionX = 0;
+                        enemyPositionY = 0;
+                        enemyAlive = false;
                     }
-                    if (movementX == enemyPositionX && playerPositionY == enemyPositionY)
-                    {
-                        enemyHealth -= 1;
-                        if (enemyHealth <= 0)
-                        {
-                            enemyPositionX = 0;
-                            enemyPositionY = 0;
-                            enemyAlive = false;
-                        }
-
-                        return;
-                    }
-
-                    if (layout[playerPositionY, movementX] == '^')
-                    {
-                        playerHealth -= 1;
-                        if (playerHealth <= 0)
-                        {
-                            gameOver = true;
-                        }
-                    }
-
-
-                    if (layout[playerPositionY, movementX] == '#')
-                    {
-                        movementX = playerPositionX;
-                        playerPositionX = movementX;
-                        return;
-                    }
-
-
-                    else
-                    {
-                        moved = true;
-                        playerPositionX = movementX;
-                        if (playerPositionX <= 0)
-                        {
-                            playerPositionX = 0;
-                        }
-
-
-                    }
-
-
+                    return;
                 }
 
+                if (layout[playerPositionY, movementX] == '^')
+                {
+                    playerHealth -= 1;
+                    if (playerHealth <= 0)
+                    {
+                        gameOver = true;
+                    }
+                }
+                if (layout[playerPositionY, movementX] == '#')
+                {
+                    movementX = playerPositionX;
+                    playerPositionX = movementX;
+                    
+                    return;
+                }
+                else
+                {
+                    moved = true;
+                    playerPositionX = movementX;
+                    if (playerPositionX <= 0)
+                    {
+                        playerPositionX = 0;
+                    }
+                 }
+            }
 
 
                 // Right
 
-                if (playerController.Key == ConsoleKey.RightArrow || playerController.Key == ConsoleKey.D)
+            if (playerController.Key == ConsoleKey.RightArrow || playerController.Key == ConsoleKey.D)
+            {
+                movementX = Math.Min(playerPositionX + 1, maximumX);
+
+                if (movementX >= maximumX)
                 {
-                    movementX = Math.Min(playerPositionX + 1, maximumX);
-
-                    if (movementX >= maximumX)
+                    movementX = maximumX;
+                }
+                if (movementX == enemyPositionX && playerPositionY == enemyPositionY)
+                {
+                    enemyHealth -= 1;
+                    if (enemyHealth <= 0)
                     {
-                        movementX = maximumX;
+                        enemyPositionX = 0;
+                        enemyPositionY = 0;
+                        enemyAlive = false;
                     }
-                    if (movementX == enemyPositionX && playerPositionY == enemyPositionY)
-                    {
-                        enemyHealth -= 1;
-                        if (enemyHealth <= 0)
-                        {
-                            enemyPositionX = 0;
-                            enemyPositionY = 0;
-                            enemyAlive = false;
-                        }
-
                         return;
-                    }
-
-                    if (layout[playerPositionY, movementX] == '^')
-                    {
-                        playerHealth -= 1;
-                        if (playerHealth <= 0)
-                        {
-                            gameOver = true;
-                        }
-                    }
-
-
-                    if (layout[playerPositionY, movementX] == '#')
-                    {
-                        movementX = playerPositionX;
-                        playerPositionX = movementX;
-                        return;
-                    }
-
-
-                    else
-                    {
-                        moved = true;
-                        playerPositionX = movementX;
-                        if (playerPositionX >= maximumX)
-                        {
-                            playerPositionX = maximumX;
-                        }
-                    }
-
                 }
 
-                // Winning door
-
-                if (layout[playerPositionY, playerPositionX] == '%')
+                if (layout[playerPositionY, movementX] == '^')
                 {
-                    youWin = true;
-                    gameOver = true;
+                    playerHealth -= 1;
+                    if (playerHealth <= 0)
+                    {
+                        gameOver = true;
+                    }
 
                 }
 
-                // Collectable seeds
-                if (layout[playerPositionY, playerPositionX] == '&')
+
+                if (layout[playerPositionY, movementX] == '#')
                 {
-                    currentSeeds += 1;
-                    layout[playerPositionY, playerPositionX] = '~';
+                    movementX = playerPositionX;
+                    playerPositionX = movementX;
+                    return;
                 }
 
-                // Exit game
 
-                if (playerController.Key == ConsoleKey.Escape)
+                else
                 {
-                    Environment.Exit(1);
+                    moved = true;
+                    playerPositionX = movementX;
+                    if (playerPositionX >= maximumX)
+                    {
+                        playerPositionX = maximumX;
+                    }
                 }
+            }
 
+            // Winning door
 
-
-
-
+            if (layout[playerPositionY, playerPositionX] == '%')
+            {
+                youWin = true;
+                gameOver = true;
 
             }
 
+            // Collectable seeds
+            if (layout[playerPositionY, playerPositionX] == '&')
+            {
+                currentSeeds += 1;
+                layout[playerPositionY, playerPositionX] = '~';
+            }
+
+            // Exit game
+            if (playerController.Key == ConsoleKey.Escape)
+            {
+                Environment.Exit(1);
+            }
         }
 
         static void EnemyMovement()
@@ -537,6 +517,8 @@ namespace PlayableTextRPG
                     enemyMovementX = maximumX;
                 }
             }
+
+
 
             // Check for collisions and update the enemy position
             if (layout[enemyMovementY, enemyMovementX] != '#')
@@ -598,6 +580,32 @@ namespace PlayableTextRPG
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
+
+
+
+
 
         
 
