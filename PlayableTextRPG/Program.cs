@@ -238,7 +238,7 @@ namespace PlayableTextRPG
                     return;
                 }
 
-
+            
 
 
 
@@ -280,9 +280,14 @@ namespace PlayableTextRPG
                     movementY = playerPositionY;
                     playerPositionY = movementY;
                     return;
-
-
                 }
+                if (layout[movementY, playerPositionX] == 'E')
+                {
+                    movementY = playerPositionY;
+                    playerPositionY = movementY;
+                    return;
+                }
+
                 else
                 {
                     moved = true;
@@ -330,6 +335,13 @@ namespace PlayableTextRPG
                 }
 
                 if (layout[movementY, playerPositionX] == '#')
+                {
+                    movementY = playerPositionY;
+                    playerPositionY = movementY;
+                    return;
+                }
+
+                if (layout[movementY, playerPositionX] == 'E')
                 {
                     movementY = playerPositionY;
                     playerPositionY = movementY;
@@ -385,6 +397,13 @@ namespace PlayableTextRPG
                     
                     return;
                 }
+                if (layout[playerPositionY, movementX] == 'E')
+                {
+                    movementX = playerPositionX;
+                    playerPositionX = movementX;
+
+                    return;
+                }
                 else
                 {
                     moved = true;
@@ -397,7 +416,7 @@ namespace PlayableTextRPG
             }
 
 
-                // Right
+            // Right
 
             if (playerController.Key == ConsoleKey.RightArrow || playerController.Key == ConsoleKey.D)
             {
@@ -416,7 +435,7 @@ namespace PlayableTextRPG
                         enemyPositionY = 0;
                         enemyAlive = false;
                     }
-                        return;
+                    return;
                 }
 
                 if (layout[playerPositionY, movementX] == '^')
@@ -436,7 +455,12 @@ namespace PlayableTextRPG
                     playerPositionX = movementX;
                     return;
                 }
-
+                if (layout[playerPositionY, movementX] == 'E')
+                {
+                    movementX = playerPositionX;
+                    playerPositionX = movementX;
+                    return;
+                }
 
                 else
                 {
@@ -447,6 +471,7 @@ namespace PlayableTextRPG
                         playerPositionX = maximumX;
                     }
                 }
+                
             }
 
             // Winning door
@@ -470,6 +495,8 @@ namespace PlayableTextRPG
             {
                 Environment.Exit(1);
             }
+
+
         }
 
         static void EnemyMovement()
@@ -485,40 +512,52 @@ namespace PlayableTextRPG
             // enemy will have 1 of 4 options to move
             int rollResult = randomRoll.Next(1, 5);
 
-            if (rollResult == 1)
+            while ((enemyMovementX == playerPositionX && enemyMovementY == playerPositionY) ||
+           (enemyMovementX == newEnemyPositionX && enemyMovementY == newEnemyPositionY))
             {
-                enemyMovementY = enemyPositionY + 1;
-                if (enemyMovementY >= maximumY)
+                rollResult = randomRoll.Next(1, 5); // Retry if the position is the same as the player
+
+
+
+                if (rollResult == 1)
                 {
-                    enemyMovementY = maximumY;
+                    enemyMovementY = enemyPositionY + 1;
+                    if (enemyMovementY >= maximumY)
+                    {
+                        enemyMovementY = maximumY;
+                    }
                 }
-            }
-            else if (rollResult == 2)
-            {
-                enemyMovementY = enemyPositionY - 1;
-                if (enemyMovementY <= 0)
+                else if (rollResult == 2)
                 {
-                    enemyMovementY = 0;
+                    enemyMovementY = enemyPositionY - 1;
+                    if (enemyMovementY <= 0)
+                    {
+                        enemyMovementY = 0;
+                    }
                 }
-            }
-            else if (rollResult == 3)
-            {
-                enemyMovementX = enemyPositionX - 1;
-                if (enemyMovementX <= 0)
+                else if (rollResult == 3)
                 {
-                    enemyMovementX = 0;
+                    enemyMovementX = enemyPositionX - 1;
+                    if (enemyMovementX <= 0)
+                    {
+                        enemyMovementX = 0;
+                    }
                 }
-            }
-            else // rollResult == 4
-            {
-                enemyMovementX = enemyPositionX + 1;
-                if (enemyMovementX >= maximumX)
+                else // rollResult == 4
                 {
-                    enemyMovementX = maximumX;
+                    enemyMovementX = enemyPositionX + 1;
+                    if (enemyMovementX >= maximumX)
+                    {
+                        enemyMovementX = maximumX;
+                    }
                 }
             }
 
-
+            if (layout[enemyMovementY, enemyMovementY] == '!')
+            {
+                return;
+                 
+            }
 
             // Check for collisions and update the enemy position
             if (layout[enemyMovementY, enemyMovementX] != '#')
@@ -530,6 +569,7 @@ namespace PlayableTextRPG
                 enemyPositionY = enemyMovementY;
             }
 
+
             // Check for collision with player
             if (enemyPositionX == playerPositionX && enemyPositionY == playerPositionY)
             {
@@ -540,6 +580,12 @@ namespace PlayableTextRPG
                 }
                 return;
             }
+            if (enemyMovementX == playerPositionX && enemyMovementY == playerPositionY)
+            {
+                // Do not move to the player's position
+                return;
+            }
+        
         }
 
 
