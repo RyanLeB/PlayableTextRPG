@@ -515,8 +515,9 @@ namespace PlayableTextRPG
             while ((enemyMovementX == playerPositionX && enemyMovementY == playerPositionY) ||
            (enemyMovementX == newEnemyPositionX && enemyMovementY == newEnemyPositionY))
             {
+                
                 rollResult = randomRoll.Next(1, 5); // Retry if the position is the same as the player
-
+                
 
 
                 if (rollResult == 1)
@@ -553,11 +554,7 @@ namespace PlayableTextRPG
                 }
             }
 
-            if (layout[enemyMovementY, enemyMovementY] == '!')
-            {
-                return;
-                 
-            }
+            
 
             // Check for collisions and update the enemy position
             if (layout[enemyMovementY, enemyMovementX] != '#')
@@ -571,20 +568,16 @@ namespace PlayableTextRPG
 
 
             // Check for collision with player
-            if (enemyPositionX == playerPositionX && enemyPositionY == playerPositionY)
+            if (enemyMovementX == newEnemyPositionX && enemyMovementY == newEnemyPositionY)
             {
                 playerHealth -= 1;
                 if (playerHealth <= 0)
                 {
                     gameOver = true;
                 }
-                return;
+                
             }
-            if (enemyMovementX == playerPositionX && enemyMovementY == playerPositionY)
-            {
-                // Do not move to the player's position
-                return;
-            }
+            
         
         }
 
